@@ -2,7 +2,7 @@ library multiple_collection_stream_system;
 
 import 'dart:async';
 
-/// You should call the `dispose()` method from this class withing your method `dispose()` in your Widget or State.
+/// You should call the `dispose()` method from this class within your method `dispose()` in your Widget or State.
 class MultipleCollectionStreamSystem<K, V> {
   final Map<K, V> _currentValues = Map<K, V>();
 

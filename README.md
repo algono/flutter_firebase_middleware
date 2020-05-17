@@ -4,6 +4,8 @@ Middleware for connecting your logic and persistence in Firebase easier.
 
 This was my main contribution to the Transportify app: https://github.com/Mobility-Solutions/Transportify
 
+Please note that this was my first time programming in Flutter (and Dart), so it may not be the best way of doing things.
+
 ## Getting Started
 
 This project is a starting point for a Dart

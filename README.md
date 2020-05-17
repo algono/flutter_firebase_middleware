@@ -1,6 +1,7 @@
 # flutter_firebase_middleware
 
 Middleware for connecting your logic and persistence in Firebase easier.
+
 This was my main contribution to the Transportify app: https://github.com/Mobility-Solutions/Transportify
 
 ## Getting Started

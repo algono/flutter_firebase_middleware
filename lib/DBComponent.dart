@@ -2,8 +2,8 @@ library componente_bd;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-abstract class ComponenteBD {
-  final CollectionReference coleccion;
+abstract class DBComponent {
+  final CollectionReference collection;
 
   DocumentReference _reference;
   DocumentReference get reference => _reference;
@@ -12,23 +12,23 @@ abstract class ComponenteBD {
   Future<void> _init;
   Future<void> waitForInit() => _init;
 
-  ComponenteBD({String coleccion})
-  : this.coleccion = coleccion == null ? null : FirebaseFirestore.instance.collection(coleccion);
+  DBComponent({String collection})
+  : this.collection = collection == null ? null : FirebaseFirestore.instance.collection(collection);
 
-  ComponenteBD.fromReference(DocumentReference reference, {bool init = true}) :
+  DBComponent.fromReference(DocumentReference reference, {bool init = true}) :
     this._reference = reference,
-    this.coleccion = reference?.parent {
-      if (init && reference != null) this._init = revertToBD();
+    this.collection = reference?.parent {
+      if (init && reference != null) this._init = revert();
       else this._init = Future.value();
     }
 
-  ComponenteBD.fromSnapshot(DocumentSnapshot snapshot)
-  : this.coleccion = snapshot.reference.parent {
+  DBComponent.fromSnapshot(DocumentSnapshot snapshot)
+  : this.collection = snapshot.reference.parent {
     _init = this.loadFromSnapshot(snapshot);
   }
 
   @override
-  bool operator ==(o) => o is ComponenteBD && o?.id == id;
+  bool operator ==(o) => o is DBComponent && o?.id == id;
 
   @override
   int get hashCode => id.hashCode;
@@ -39,37 +39,37 @@ abstract class ComponenteBD {
 
   Future<Map<String, dynamic>> toMap();
 
-  Future<void> crearEnBD() async {
+  Future<void> create() async {
     Map<String, dynamic> map = await this.toMap();
     if (map != null) {
       if (reference == null) {
-        return coleccion.add(map).then((reference) {
+        return collection.add(map).then((reference) {
           this._reference = reference;
         });
       } else {
         return reference.set(map);
       }
     } else {
-      throw UnsupportedError("No se pueden crear instancias de este objeto");
+      throw UnsupportedError("Creating this object type in the database is not supported");
     }
   }
 
-  Future<void> updateBD() async {
+  Future<void> update() async {
     Map<String, dynamic> map = await this.toMap();
     if (map != null) {
       return reference?.update(map);
     } else {
-      throw UnsupportedError("Este objeto es de solo lectura");
+      throw UnsupportedError("This object type is readonly");
     }
   }
 
-  Future<void> revertToBD() => reference?.get()?.then((snapshot) {
+  Future<void> revert() => reference?.get()?.then((snapshot) {
     if (snapshot.exists) {
       return loadFromSnapshot(snapshot);
     } else {
-      throw StateError("Este objeto no existe en la base de datos");
+      throw StateError("This object does not exist in the database");
     }
   });
 
-  Future<void> deleteFromBD() => reference?.delete();
+  Future<void> delete() => reference?.delete();
 }

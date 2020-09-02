@@ -4,23 +4,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_firebase_middleware/MultipleCollectionStreamSystem.dart';
-import 'package:flutter_firebase_middleware/ComponenteBD.dart';
+import 'package:flutter_firebase_middleware/DBComponent.dart';
 
-class Datos {
-  static StreamBuilder<QuerySnapshot> obtenerStreamBuilderCollectionBD(
-      String collectionPath,
-      Widget Function(BuildContext, AsyncSnapshot<QuerySnapshot>) builder) {
-    return obtenerStreamBuilderCollectionBDFromReference(
-        obtenerColeccion(collectionPath), builder);
-  }
+class DataRetriever {
+  // STREAMS
 
-  static MultipleCollectionStreamSystem obtenerStreamsCollectionsBD(
+  // Multiple Collection
+  static MultipleCollectionStreamSystem getMultipleCollectionStream(
           Map<Type, String> collectionPaths) =>
       MultipleCollectionStreamSystem(collectionPaths.map(
-          (type, collectionPath) => MapEntry(type, obtenerColeccion(collectionPath).snapshots())));
+          (type, collectionPath) => MapEntry(type, getCollection(collectionPath).snapshots())));
 
   static StreamBuilder<Map<Type, QuerySnapshot>>
-      obtenerStreamBuilderFromMultipleCollectionStreamSystem(
+      getStreamBuilderFromMultipleCollectionStreamSystem(
           MultipleCollectionStreamSystem multipleCollectionStreamSystem,
           Widget Function(BuildContext, AsyncSnapshot<Map<Type, QuerySnapshot>>)
               builder) {
@@ -30,8 +26,16 @@ class Datos {
     );
   }
 
+  // Collection
+  static StreamBuilder<QuerySnapshot> getCollectionStreamBuilder(
+      String collectionPath,
+      Widget Function(BuildContext, AsyncSnapshot<QuerySnapshot>) builder) {
+    return getCollectionStreamBuilderFromReference(
+        getCollection(collectionPath), builder);
+  }
+
   static StreamBuilder<QuerySnapshot>
-      obtenerStreamBuilderCollectionBDFromReference(
+      getCollectionStreamBuilderFromReference(
           CollectionReference collectionReference,
           Widget Function(BuildContext, AsyncSnapshot<QuerySnapshot>) builder) {
     return StreamBuilder<QuerySnapshot>(
@@ -40,15 +44,16 @@ class Datos {
     );
   }
 
-  static StreamBuilder<DocumentSnapshot> obtenerStreamBuilderDocumentBD(
+  // Document (Doc)
+  static StreamBuilder<DocumentSnapshot> getDocStreamBuilder(
       String documentPath,
       Widget Function(BuildContext, AsyncSnapshot<DocumentSnapshot>) builder) {
-    return obtenerStreamBuilderDocumentBDFromReference(
-        obtenerDocumento(documentPath), builder);
+    return getDocStreamBuilderFromReference(
+        getDoc(documentPath), builder);
   }
 
   static StreamBuilder<DocumentSnapshot>
-      obtenerStreamBuilderDocumentBDFromReference(
+      getDocStreamBuilderFromReference(
           DocumentReference documentReference,
           Widget Function(BuildContext, AsyncSnapshot<DocumentSnapshot>)
               builder) {
@@ -58,21 +63,25 @@ class Datos {
     );
   }
 
-  static CollectionReference obtenerColeccion(String collectionPath) =>
+  // HELPER FUNCTIONS
+
+  static CollectionReference getCollection(String collectionPath) =>
       FirebaseFirestore.instance.collection(collectionPath);
-  static DocumentReference obtenerDocumento(String documentPath) =>
+
+  static DocumentReference getDoc(String documentPath) =>
       FirebaseFirestore.instance.doc(documentPath);
 
-  static Future<DocumentReference> crearDocument(
+  
+  static Future<DocumentReference> createDoc(
       String collectionPath, Map<String, dynamic> data) {
     return FirebaseFirestore.instance.collection(collectionPath).add(data);
   }
 
-  static Future<void> eliminarTodosLosComponentes<T extends ComponenteBD>(
-          Iterable<T> listado) =>
-      Future.forEach(listado, (componente) => componente.deleteFromBD());
+  static Future<void> removeAllComponents<T extends DBComponent>(
+          Iterable<T> list) =>
+      Future.forEach(list, (component) => component.delete());
 
-  static Widget obtenerListViewItem<T>(
+  static Widget getListViewItem<T>(
       {T item,
       String displayName,
       bool selected = false,

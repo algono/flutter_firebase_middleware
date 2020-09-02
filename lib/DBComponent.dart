@@ -1,4 +1,4 @@
-library componente_bd;
+library db_component;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 

@@ -59,13 +59,13 @@ class Datos {
   }
 
   static CollectionReference obtenerColeccion(String collectionPath) =>
-      Firestore.instance.collection(collectionPath);
+      FirebaseFirestore.instance.collection(collectionPath);
   static DocumentReference obtenerDocumento(String documentPath) =>
-      Firestore.instance.document(documentPath);
+      FirebaseFirestore.instance.doc(documentPath);
 
   static Future<DocumentReference> crearDocument(
       String collectionPath, Map<String, dynamic> data) {
-    return Firestore.instance.collection(collectionPath).add(data);
+    return FirebaseFirestore.instance.collection(collectionPath).add(data);
   }
 
   static Future<void> eliminarTodosLosComponentes<T extends ComponenteBD>(

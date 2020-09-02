@@ -13,7 +13,7 @@ abstract class ComponenteBD {
   Future<void> waitForInit() => _init;
 
   ComponenteBD({String coleccion})
-  : this.coleccion = coleccion == null ? null : Firestore.instance.collection(coleccion);
+  : this.coleccion = coleccion == null ? null : FirebaseFirestore.instance.collection(coleccion);
 
   ComponenteBD.fromReference(DocumentReference reference, {bool init = true}) :
     this._reference = reference,

@@ -7,7 +7,7 @@ abstract class ComponenteBD {
 
   DocumentReference _reference;
   DocumentReference get reference => _reference;
-  String get id => reference?.documentID;
+  String get id => reference?.id;
 
   Future<void> _init;
   Future<void> waitForInit() => _init;
@@ -17,13 +17,13 @@ abstract class ComponenteBD {
 
   ComponenteBD.fromReference(DocumentReference reference, {bool init = true}) :
     this._reference = reference,
-    this.coleccion = reference?.parent() {
+    this.coleccion = reference?.parent {
       if (init && reference != null) this._init = revertToBD();
       else this._init = Future.value();
     }
 
   ComponenteBD.fromSnapshot(DocumentSnapshot snapshot)
-  : this.coleccion = snapshot.reference.parent() {
+  : this.coleccion = snapshot.reference.parent {
     _init = this.loadFromSnapshot(snapshot);
   }
 
@@ -47,7 +47,7 @@ abstract class ComponenteBD {
           this._reference = reference;
         });
       } else {
-        return reference.setData(map);
+        return reference.set(map);
       }
     } else {
       throw UnsupportedError("No se pueden crear instancias de este objeto");
@@ -57,7 +57,7 @@ abstract class ComponenteBD {
   Future<void> updateBD() async {
     Map<String, dynamic> map = await this.toMap();
     if (map != null) {
-      return reference?.updateData(map);
+      return reference?.update(map);
     } else {
       throw UnsupportedError("Este objeto es de solo lectura");
     }
